@@ -108,7 +108,7 @@ function sendStats(msgD,ip,port,color){
 	for(let i=0;i<checkArreglo.length;i++){
 		try{
 			let part=parseInt(checkArreglo[i]);
-			if(part<0 || part>255 ||!part || part==NaN){
+			if((part<0 || part>255 ||!part || part==NaN) && part!=0){
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(color);
 				embed.setTitle("Ops...");
