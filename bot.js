@@ -160,6 +160,28 @@ bot.on("message",msg=>{
 				}else if(args.length>1){
 					sendStats(msg,"104.153.105.98",parseInt(args[1]),msg.member.displayColor);
 				}
+				break;
+			case "hello":
+				var embed=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("Hey");
+				embed.setDescription("You can see /help if you want to discover my function");		
+				msg.channel.send(embed);
+				break;
+			case "help":
+				var embed=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("And what does this bot?");
+				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats");
+				msg.channel.send(embed);
+				break;
+			default:
+				var embed=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("Maybe are you saying me something?");
+				embed.setDescription("You can see /help if you want to discover my function");		
+				msg.channel.send(embed);
+				break;
 		}
 	}
 });
