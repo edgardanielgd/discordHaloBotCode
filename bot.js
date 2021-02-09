@@ -6,6 +6,7 @@ var auth=require('./auth.json');
 var sock=require("socket.io");
 var dgram=require("dgram");
 var fs=require("fs");
+var waitingTimers=[];
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console,{colorize:true});
 logger.level='debug';
@@ -32,7 +33,6 @@ function decodeString(string){
 }
 function genString(string){
 	var array=decodeString(string);
-	console.log(array);
 	let svName=array[2];
 	let port=array[6];
 	let maxPlayers=array[8];
@@ -66,6 +66,8 @@ function genString(string){
 	return str+infPlayers;
 }
 function sendStats(msgD,ip,port,color){
+	var id=0;
+	var waitTime=1000;
 	var conexion=dgram.createSocket("udp4");
 	try{
 		port=parseInt(port);
@@ -134,6 +136,7 @@ function sendStats(msgD,ip,port,color){
 		msgD.channel.send(embed);
 	});
 	conexion.on("message",(msg,rinfo)=>{
+		clearTimeout(id);
 		var embed=new Discord.MessageEmbed();
 		embed.setTitle("Checking states of "+ip+":"+port);
 		embed.setColor(color);
@@ -146,8 +149,15 @@ function sendStats(msgD,ip,port,color){
 		var address=conexion.address();
 		console.log("server listening "+address.address+":"+address.port);
 	});
-	var mensaje=String.fromCharCode(254,253,0,119,106,63,63,255,255,255,255)
-	conexion.send(Buffer.from(mensaje,"ascii"),0,11,port,ip); //ESTE TROZO VALE OROOOOOOOOOO		
+	var mensaje=String.fromCharCode(254,253,0,119,106,63,63,255,255,255,255);
+	conexion.send(Buffer.from(mensaje,"ascii"),0,11,port,ip); //ESTE TROZO VALE OROOOOOOOOOO
+	id=setTimeout(function(){
+		var embed=new Discord.MessageEmbed();
+		embed.setColor(color);
+		embed.setTitle("Ops...");
+		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?\nWaited time: "+waitTime+"ms for "+ip+":"+port+" server");	
+		msgD.channel.send(embed);
+	},waitTime);		
 }
 bot.on("message",msg=>{
 	if(msg.toString().substring(0,1)=='/'){
