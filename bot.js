@@ -49,8 +49,8 @@ function genString(string){
 		teamplay="FALSE";
 	}else teamplay="TRUE";
 	let gamevar=array[26];
-	let str="SERVER NAME: "+svName+"\nPORT: "+port+"\nMAX. PLAYERS: "+maxPlayers+"\nPASSWORD: "+password+"\nMAP NAME: "+mapName+"\nONLINE PLAYERS: "+numPlayers;
-	str=str+"\nGAMETYPE: "+gametype+"\nTEAMPLAY: "+teamplay+"\nVARIANT: \n"+gamevar;
+	let str="Server name:\t "+svName+"\nPort:\t "+port+"\nMax. Players:\t "+maxPlayers+"\nPassword:\t "+password+"\nMap name:\t "+mapName+"\nOnline Players:\t "+numPlayers;
+	str=str+"\nGametype:\t "+gametype+"\nTeamplay:\t "+teamplay+"\nVariant:\t "+gamevar;
 	let infPlayers="```\n";
 	if(parseInt(numPlayers)==0){
 		infPlayers+="No players online in this moment... (Maybe seed them?)";
@@ -64,8 +64,69 @@ function genString(string){
 		}
 	};
 	infPlayers+="\n```";
-	return str+infPlayers;
+	return [str+infPlayers,mapName];
 }
+function getMapDir(mapname){
+		switch(mapname){
+			case "deathisland":
+				return "https://static.wikia.nocookie.net/halo/images/0/04/Isla_2.jpg/revision/latest/top-crop/width/220/height/220?cb=20120226012948&path-prefix=es";
+				break;
+			case "beavercreek":
+				return "https://static.wikia.nocookie.net/halo/images/a/aa/Beavercreek.jpg/revision/latest?cb=20060727204435";
+				break;
+			case "chillout":
+				return "https://static.wikia.nocookie.net/halo/images/2/2a/79220362729634319.jpg/revision/latest/scale-to-width-down/340?cb=20110630152316&path-prefix=es";
+				break;
+			case "ratrace":
+				return "https://static.wikia.nocookie.net/halo/images/c/c3/RatRace.png/revision/latest?cb=20110326021303&path-prefix=es";
+				break;
+			case "bloodgulch":
+				return "https://i.ytimg.com/vi/gbFVwhw8Wcs/mqdefault.jpg";
+				break;
+			case "gephyrophobia":
+				return "https://static.wikia.nocookie.net/halo/images/0/00/Halo_CE_Gephyrophobia.jpg/revision/latest/scale-to-width-down/340?cb=20070604185719";
+				break;
+			case "hangemhigh":
+				return "https://static.wikia.nocookie.net/halo/images/0/03/Hangemhigh.PNG/revision/latest?cb=20080514072638";
+				break;
+			case "boardingaction":
+				return "https://static.wikia.nocookie.net/halo/images/1/11/BoardingAction.png/revision/latest?cb=20170414043015&path-prefix=es";
+				break;
+			case "damnation":
+				return "https://static.wikia.nocookie.net/halo/images/1/1d/DamnationPC.JPG/revision/latest?cb=20070705204750";
+				break;
+			case "carousel":
+				return "https://www.halopedia.org/images/thumb/5/52/Halo_CE_Derelict.jpg/1200px-Halo_CE_Derelict.jpg";
+				break;
+			case "prisoner":
+				return "https://static.wikia.nocookie.net/halo/images/3/37/Prisoner.jpg/revision/latest?cb=20110706020746&path-prefix=es";
+				break;
+			case "dangercanyon":
+				return "https://www.halopedia.org/images/thumb/e/e8/Halo_Combat_Evolved-Danger_Canyon.jpg/1200px-Halo_Combat_Evolved-Danger_Canyon.jpg";
+				break;
+			case "icefields":
+				return "https://www.halopedia.org/images/thumb/d/db/Halo_Combat_Evolved-Ice_Fields.jpg/1200px-Halo_Combat_Evolved-Ice_Fields.jpg";
+				break;
+			case "infinity":
+				return "https://www.halopedia.org/images/thumb/b/bb/Halo_Combat_Evolved-Infinity.jpg/1200px-Halo_Combat_Evolved-Infinity.jpg";
+				break;
+			case "longest":
+				return "https://static.wikia.nocookie.net/halo/images/0/05/Longest2.jpg/revision/latest?cb=20060724232238";
+				break;
+			case "sidewinder":
+				return "https://i.ytimg.com/vi/CQxcV48pa5A/maxresdefault.jpg";
+				break;
+			case "timberland":
+				return "https://www.halopedia.org/images/thumb/5/53/Halo_Combat_Evolved-Timberland.jpg/1200px-Halo_Combat_Evolved-Timberland.jpg";
+				break;
+			case "wizard":
+				return "https://static.wikia.nocookie.net/halo/images/c/c7/Wizard.png/revision/latest?cb=20110716200853&path-prefix=es";
+				break;
+			default:
+				return "https://images.idgesg.net/images/article/2020/08/one_large_glowing_question_mark_surrounded_by_many_small_question_marks_questions_doubts_unknown_by_carloscastilla_gettyimages-1188952754_cso_nw_2400x1600-100854972-large.jpg";
+				break;
+		}
+	}
 function sendStats(msgD,ip,port,color){
 	var id=0;
 	var waitTime=1000;
@@ -77,6 +138,7 @@ function sendStats(msgD,ip,port,color){
 			embed.setColor(color);
 			embed.setTitle("Ops...");
 			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
+			embed.setAuthor("Hi! I obtained this:");
 			msgD.channel.send(embed);
 			return;
 		}
@@ -86,6 +148,7 @@ function sendStats(msgD,ip,port,color){
 		embed.setColor(color);
 		embed.setTitle("Ops...");
 		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
+		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 		return;
 	}
@@ -94,6 +157,7 @@ function sendStats(msgD,ip,port,color){
 		embed.setColor(color);
 		embed.setTitle("Ops...");
 		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
+		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 		return;
 	}
@@ -103,6 +167,7 @@ function sendStats(msgD,ip,port,color){
 		embed.setColor(color);
 		embed.setTitle("Ops...");
 		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
+		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 		return;	
 	}
@@ -114,6 +179,7 @@ function sendStats(msgD,ip,port,color){
 				embed.setColor(color);
 				embed.setTitle("Ops...");
 				embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
+				embed.setAuthor("Hi! I obtained this:");
 				msgD.channel.send(embed);
 				return;
 			}
@@ -122,7 +188,8 @@ function sendStats(msgD,ip,port,color){
 			var embed=new Discord.MessageEmbed();
 			embed.setColor(color);
 			embed.setTitle("Ops...");
-			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");		
+			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
+			embed.setAuthor("Hi! I obtained this:");		
 			msgD.channel.send(embed);
 			return;
 		}
@@ -134,6 +201,7 @@ function sendStats(msgD,ip,port,color){
 		embed.setColor(color);
 		embed.setTitle("Ops...");
 		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
+		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 	});
 	conexion.on("message",(msg,rinfo)=>{
@@ -141,7 +209,10 @@ function sendStats(msgD,ip,port,color){
 		var embed=new Discord.MessageEmbed();
 		embed.setTitle("Checking states of "+ip+":"+port);
 		embed.setColor(color);
-		embed.setDescription(genString(msg.toString()));
+		let inf=genString(msg.toString());
+		embed.setDescription(inf[0]);
+		embed.setThumbnail(getMapDir(inf[1]));
+		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 		return;
 
@@ -157,6 +228,7 @@ function sendStats(msgD,ip,port,color){
 		embed.setColor(color);
 		embed.setTitle("Ops...");
 		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?\nWaited time: "+waitTime+"ms for "+ip+":"+port+" server");	
+		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 	},waitTime);		
 }
@@ -179,14 +251,15 @@ bot.on("message",msg=>{
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Hey");
-				embed.setDescription("You can see /help if you want to discover my function");		
+				embed.setDescription("You can see /help if you want to discover my function");	
+				embed.setAuthor("Good morning/afternoon/night");	
 				msg.channel.send(embed);
 				break;
 			case "help":
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("And what does this bot?");
-				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats");
+				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...");
 				msg.channel.send(embed);
 				break;
 			case "credits":
@@ -194,6 +267,7 @@ bot.on("message",msg=>{
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Huge thanks!");
 				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman");
+				embed.setAuthor("Hi! I obtained this:");
 				msg.channel.send(embed);
 				break;
 			default:
