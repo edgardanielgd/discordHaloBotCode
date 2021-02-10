@@ -28,6 +28,10 @@ function decodeString(string){
 		}
 		if(code==1)continue;
 		if(code==2)continue;
+		if(code==42)continue;
+		if(code==95)continue;
+		if(code==96)continue;
+		if(code==126)continue;
 		string_ret+=string[i];
 	}
 	return arreglo;
