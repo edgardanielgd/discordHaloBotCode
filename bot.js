@@ -7,6 +7,7 @@ var sock=require("socket.io");
 var dgram=require("dgram");
 var fs=require("fs");
 var waitingTimers=[];
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console,{colorize:true});
 logger.level='debug';
@@ -159,6 +160,9 @@ function sendStats(msgD,ip,port,color){
 		msgD.channel.send(embed);
 	},waitTime);		
 }
+function checkServers(msg,ip,color){
+		
+	}
 bot.on("message",msg=>{
 	if(msg.toString().substring(0,1)=='/'){
 		var args=msg.toString().substring(1).split(' ');
@@ -183,6 +187,13 @@ bot.on("message",msg=>{
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("And what does this bot?");
 				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats");
+				msg.channel.send(embed);
+				break;
+			case "credits":
+				var embed=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("Huge thanks!");
+				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman");
 				msg.channel.send(embed);
 				break;
 			default:
