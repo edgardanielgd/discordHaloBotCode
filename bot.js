@@ -266,9 +266,9 @@ bot.on("message",msg=>{
 				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...");
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
-				embed.setColor(msg.member.displayColor);
-				embed.setTitle("And what if...");
-				embed.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
+				embed2.setColor(msg.member.displayColor);
+				embed2.setTitle("And what if...");
+				embed2.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
 				msg.channel.send(embed2);
 				break;
 			case "credits":
@@ -279,9 +279,9 @@ bot.on("message",msg=>{
 				embed.setAuthor("Hi! I obtained this:");
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
-				embed.setColor(msg.member.displayColor);
-				embed.setTitle("And what if...");
-				embed.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
+				embed2.setColor(msg.member.displayColor);
+				embed2.setTitle("And what if...");
+				embed2.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
 				msg.channel.send(embed2);
 				break;
 			default:
