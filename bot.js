@@ -216,8 +216,48 @@ function sendStats(msgD,ip,port,color,user){
 		msgD.channel.send(embed);
 	},waitTime);		
 }
+var mutes={};
+var users={};
+var maxMessagesForMute=5;
+var timeBetweenMessages=1000; //ms
+var timePunishment=30000; //5 mins
 bot.on("message",msg=>{
+	
 	if(msg.toString().substring(0,1)=='/'){
+		/*
+			userID:[nMessages,nIdInterval]
+		*/
+		if(mutes.hasOwnProperty(msg.author.id)){
+			return;
+		}
+		if(users.hasOwnProperty(msg.author.id)){
+			let nMes=users[msg.author.id][0];
+			if(nMes+1===maxMessagesForMute){
+				mutes[msg.author.id]=true;
+				var embed=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("Calm down dude!");
+				embed.setDescription("I will not listen your spam for "+timePunishment+" miliseconds.\n Please do NOT again.");	
+				embed.setAuthor("Bad kid...");
+				msg.channel.send(embed);
+				setTimeout(function(ID){
+					delete mutes[ID];
+				},timePunishment,msg.author.id);
+				return;
+			}else{
+				clearTimeout(users[msg.author.id][1]);
+				users[msg.author.id][0]+=1;
+				users[msg.author.id][1]=setTimeout(function(ID){
+					delete users[ID];
+				},timeBetweenMessages,msg.author.id);
+			
+			}
+		}else{
+			console.log("user writed for first time");
+			users[msg.author.id]=[1,setTimeout(function(ID){
+				delete users[ID];
+			},timeBetweenMessages,msg.author.id)];
+		}
 		var args=msg.toString().substring(1).split(' ');
 		var cmd=args[0];
 		switch(cmd){
@@ -228,6 +268,7 @@ bot.on("message",msg=>{
 				}else if(args.length>1){
 					sendStats(msg,"104.153.105.98",parseInt(args[1]),msg.member.displayColor,msg.author);
 				}
+				msg.react(":regional_indicator_o:");
 				break;
 			case "hello":
 				var embed=new Discord.MessageEmbed();
