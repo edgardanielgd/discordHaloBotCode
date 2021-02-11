@@ -19,7 +19,7 @@ bot.once('ready', () => {
 bot.login(auth.Token);
 function decodeString(string){
 	var string_ret="";
-	arreglo=[];
+	var arreglo=[];
 	for(let i=0;i<string.length;i++){
 		let code=string.charCodeAt(i);
 		if(code==0){
@@ -66,7 +66,7 @@ function genString(string){
 			if(parseInt(array[40+i*4+3])==0){
 			Team="RED";
 			}else Team="BLUE";
-			infPlayers+=(i+1)". Name:"+array[40+i*4]+"\tScore: "+array[40+i*4+1]+"\tPing: "+array[40+i*4+2]+"\tTeam: "+Team+"\n";
+			infPlayers+=(i+1)+". Name:"+array[40+i*4]+"\tScore: "+array[40+i*4+1]+"\tPing: "+array[40+i*4+2]+"\tTeam: "+Team+"\n";
 		}
 	};
 	infPlayers+="\n```";
