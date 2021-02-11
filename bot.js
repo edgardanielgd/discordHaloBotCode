@@ -271,7 +271,6 @@ bot.on("message",msg=>{
 				embed.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
 				msg.channel.send(embed2);
 				break;
-				break;
 			case "credits":
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
@@ -284,7 +283,6 @@ bot.on("message",msg=>{
 				embed.setTitle("And what if...");
 				embed.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
 				msg.channel.send(embed2);
-				break;
 				break;
 			default:
 				var embed=new Discord.MessageEmbed();
