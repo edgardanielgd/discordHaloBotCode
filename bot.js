@@ -13,6 +13,7 @@ logger.add(new logger.transports.Console,{colorize:true});
 logger.level='debug';
 var bot=new Discord.Client();
 bot.once('ready', () => {
+	bot.user.setActivity("Watching Halo CE and Halo PC servers stats");
 	console.log('Ready!');
 });
 bot.login(auth.Token);
