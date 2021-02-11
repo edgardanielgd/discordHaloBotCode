@@ -235,7 +235,7 @@ bot.on("message",msg=>{
 				embed.setTitle("Hey");
 				embed.setDescription("You can see /help if you want to discover my function");	
 				embed.setAuthor("Good morning/afternoon/night");
-				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
+				embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
 				msg.channel.send(embed);
 				break;
 			case "help":
@@ -243,7 +243,7 @@ bot.on("message",msg=>{
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("And what does this bot?");
 				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...");
-				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
+				embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
 				embed2.setColor(msg.member.displayColor);
@@ -257,7 +257,7 @@ bot.on("message",msg=>{
 				embed.setTitle("Huge thanks!");
 				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman\nhttps://github.com/edgardanielgd/HaloStatsForDiscord");
 				embed.setAuthor("Hi! I obtained this:");
-				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
+				embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
 				embed2.setColor(msg.member.displayColor);
@@ -270,7 +270,7 @@ bot.on("message",msg=>{
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Maybe are you saying me something?");
 				embed.setDescription("You can see /help if you want to discover my function");		
-				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
+				embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
 				msg.channel.send(embed);
 				break;
 		}
