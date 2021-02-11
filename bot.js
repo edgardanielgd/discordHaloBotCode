@@ -274,7 +274,9 @@ bot.on("message",msg=>{
 				msg.channel.send(embed);
 				break;
 		}
-	}
+	}else if(msg.toString()=="ok" || msg.toString()=="Ok" || msg.toString()=="oK" || msg.toString()=="OK"){
+				msg.react(String.fromCodePoint("O".codePointAt(0) - 65 + 0x1f1e6)).then(msg.react(String.fromCodePoint("K".codePointAt(0) - 65 + 0x1f1e6)));
+			}
 });
 
 
