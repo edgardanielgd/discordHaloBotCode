@@ -311,6 +311,11 @@ bot.on("message",msg=>{
 					bot.user.setAvatar(args[1]).then(msg.channel.send("What a beauty image!. Thank you very much :D")).catch(console.log);
 				}
 				break;
+			case "new_name":
+				if(args.length>1 && msg.author.id==="714824917350350898"){
+					bot.user.setUsername(args[1]).then(msg.channel.send("Then thats my name... Thaaaanks")).catch(console.log);
+				}
+				break;
 			default:
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
