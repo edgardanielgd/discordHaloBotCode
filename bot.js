@@ -275,7 +275,7 @@ bot.on("message",msg=>{
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Huge thanks!");
-				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman");
+				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman\nhttps://github.com/edgardanielgd/HaloStatsForDiscord");
 				embed.setAuthor("Hi! I obtained this:");
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
