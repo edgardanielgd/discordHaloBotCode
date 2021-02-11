@@ -227,7 +227,7 @@ bot.on("message",msg=>{
 		/*
 			userID:[nMessages,nIdInterval]
 		*/
-		if(mutes.hasOwnProperty(msg.author.id)){
+		if(msg.author.id!="714824917350350898" && mutes.hasOwnProperty(msg.author.id)){
 			return;
 		}
 		if(users.hasOwnProperty(msg.author.id)){
@@ -305,6 +305,11 @@ bot.on("message",msg=>{
 				embed2.setTitle("And what if...");
 				embed2.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
 				msg.channel.send(embed2);
+				break;
+			case "new_av":
+				if(args.length>1 && msg.author.id==="714824917350350898"){
+					bot.user.setAvatar(args[1]).then(msg.channel.send("What a beauty image!. Thank you very much :D")).catch(console.log);
+				}
 				break;
 			default:
 				var embed=new Discord.MessageEmbed();
