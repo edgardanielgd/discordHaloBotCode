@@ -38,6 +38,7 @@ function decodeString(string){
 	return arreglo;
 }
 function genString(string){
+	console.log("~".charCodeAt(0));
 	var array=decodeString(string);
 	let svName=array[2];
 	let port=array[6];
@@ -65,7 +66,7 @@ function genString(string){
 			if(parseInt(array[40+i*4+3])==0){
 			Team="RED";
 			}else Team="BLUE";
-			infPlayers+=(i+1)+". Name:"+array[40+i*4]+"\tScore: "+array[40+i*4+1]+"\tPing: "+array[40+i*4+2]+"\tTeam: "+Team+"\n";
+			infPlayers+="Name:"+array[40+i*4]+"\tScore: "+array[40+i*4+1]+"\tPing: "+array[40+i*4+2]+"\tTeam: "+Team+"\n";
 		}
 	};
 	infPlayers+="\n```";
@@ -132,47 +133,39 @@ function getMapDir(mapname){
 				break;
 		}
 	}
-function sendStats(msgD,ip,port,color){
+function sendStats(msgD,ip,port,color,user){
 	var id=0;
 	var waitTime=1000;
 	var conexion=dgram.createSocket("udp4");
+	var embed=new Discord.MessageEmbed();
+	embed.setColor(color);	
+	embed.setAuthor("Hi! I obtained this:");
+	embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
 	try{
 		port=parseInt(port);
 		if(!port || port==NaN){
-			var embed=new Discord.MessageEmbed();
-			embed.setColor(color);
 			embed.setTitle("Ops...");
-			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
-			embed.setAuthor("Hi! I obtained this:");
+			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
 			msgD.channel.send(embed);
 			return;
 		}
 	}catch (e){
 		console.log(e);
-		var embed=new Discord.MessageEmbed();
-		embed.setColor(color);
 		embed.setTitle("Ops...");
-		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
-		embed.setAuthor("Hi! I obtained this:");
+		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
 		msgD.channel.send(embed);
 		return;
 	}
 	if(port<=0 || port>=65536){
-		var embed=new Discord.MessageEmbed();
-		embed.setColor(color);
 		embed.setTitle("Ops...");
-		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
-		embed.setAuthor("Hi! I obtained this:");
+		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
 		msgD.channel.send(embed);
 		return;
 	}
 	var checkArreglo=ip.split(".");
 	if(checkArreglo.length!=4){
-		var embed=new Discord.MessageEmbed();
-		embed.setColor(color);
 		embed.setTitle("Ops...");
-		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
-		embed.setAuthor("Hi! I obtained this:");
+		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
 		msgD.channel.send(embed);
 		return;	
 	}
@@ -180,21 +173,16 @@ function sendStats(msgD,ip,port,color){
 		try{
 			let part=parseInt(checkArreglo[i]);
 			if((part<0 || part>255 ||!part || part==NaN) && part!=0){
-				var embed=new Discord.MessageEmbed();
-				embed.setColor(color);
 				embed.setTitle("Ops...");
-				embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
-				embed.setAuthor("Hi! I obtained this:");
+				embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
 				msgD.channel.send(embed);
 				return;
 			}
 		}catch(e){
 			console.log(e);
 			var embed=new Discord.MessageEmbed();
-			embed.setColor(color);
 			embed.setTitle("Ops...");
-			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
-			embed.setAuthor("Hi! I obtained this:");		
+			embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");		
 			msgD.channel.send(embed);
 			return;
 		}
@@ -202,22 +190,16 @@ function sendStats(msgD,ip,port,color){
 	conexion.on("error",(err)=>{
 		console.log("server error: \n "+err.stack);
 		conexion.close();
-		var embed=new Discord.MessageEmbed();
-		embed.setColor(color);
 		embed.setTitle("Ops...");
-		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");	
-		embed.setAuthor("Hi! I obtained this:");
+		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?");
 		msgD.channel.send(embed);
 	});
 	conexion.on("message",(msg,rinfo)=>{
 		clearTimeout(id);
-		var embed=new Discord.MessageEmbed();
 		embed.setTitle("Checking states of "+ip+":"+port);
-		embed.setColor(color);
 		let inf=genString(msg.toString());
 		embed.setDescription(inf[0]);
 		embed.setThumbnail(getMapDir(inf[1]));
-		embed.setAuthor("Hi! I obtained this:");
 		msgD.channel.send(embed);
 		return;
 
@@ -229,35 +211,31 @@ function sendStats(msgD,ip,port,color){
 	var mensaje=String.fromCharCode(254,253,0,119,106,63,63,255,255,255,255);
 	conexion.send(Buffer.from(mensaje,"ascii"),0,11,port,ip); //ESTE TROZO VALE OROOOOOOOOOO
 	id=setTimeout(function(){
-		var embed=new Discord.MessageEmbed();
-		embed.setColor(color);
 		embed.setTitle("Ops...");
-		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?\nWaited time: "+waitTime+"ms for "+ip+":"+port+" server");	
-		embed.setAuthor("Hi! I obtained this:");
+		embed.setDescription("Could you please try again with a valid ip?...\nWhat about a server offline?\nWaited time: "+waitTime+"ms for "+ip+":"+port+" server");
 		msgD.channel.send(embed);
 	},waitTime);		
 }
-function checkServers(msg,ip,color){
-		
-	}
 bot.on("message",msg=>{
 	if(msg.toString().substring(0,1)=='/'){
 		var args=msg.toString().substring(1).split(' ');
 		var cmd=args[0];
 		switch(cmd){
 			case "on":
+				console.log(msg.author.avatarURL());
 				if(args.length>2){
-					sendStats(msg,args[1],parseInt(args[2]),msg.member.displayColor);
+					sendStats(msg,args[1],parseInt(args[2]),msg.member.displayColor,msg.author);
 				}else if(args.length>1){
-					sendStats(msg,"104.153.105.98",parseInt(args[1]),msg.member.displayColor);
+					sendStats(msg,"104.153.105.98",parseInt(args[1]),msg.member.displayColor,msg.author);
 				}
-				
+				break;
 			case "hello":
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Hey");
 				embed.setDescription("You can see /help if you want to discover my function");	
-				embed.setAuthor("Good morning/afternoon/night");	
+				embed.setAuthor("Good morning/afternoon/night");
+				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
 				msg.channel.send(embed);
 				break;
 			case "help":
@@ -265,6 +243,7 @@ bot.on("message",msg=>{
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("And what does this bot?");
 				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...");
+				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
 				embed2.setColor(msg.member.displayColor);
@@ -278,6 +257,7 @@ bot.on("message",msg=>{
 				embed.setTitle("Huge thanks!");
 				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman\nhttps://github.com/edgardanielgd/HaloStatsForDiscord");
 				embed.setAuthor("Hi! I obtained this:");
+				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
 				msg.channel.send(embed);
 				var embed2=new Discord.MessageEmbed();
 				embed2.setColor(msg.member.displayColor);
@@ -290,10 +270,10 @@ bot.on("message",msg=>{
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Maybe are you saying me something?");
 				embed.setDescription("You can see /help if you want to discover my function");		
+				embed.setFooter("Requested by: "+user.username+"#"+user.discriminator,user.avatarURL());
 				msg.channel.send(embed);
 				break;
 		}
-		
 	}
 });
 
