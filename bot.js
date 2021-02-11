@@ -250,7 +250,7 @@ bot.on("message",msg=>{
 				}else if(args.length>1){
 					sendStats(msg,"104.153.105.98",parseInt(args[1]),msg.member.displayColor);
 				}
-				break;
+				
 			case "hello":
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
@@ -265,6 +265,12 @@ bot.on("message",msg=>{
 				embed.setTitle("And what does this bot?");
 				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...");
 				msg.channel.send(embed);
+				var embed2=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("And what if...");
+				embed.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
+				msg.channel.send(embed2);
+				break;
 				break;
 			case "credits":
 				var embed=new Discord.MessageEmbed();
@@ -273,6 +279,12 @@ bot.on("message",msg=>{
 				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman");
 				embed.setAuthor("Hi! I obtained this:");
 				msg.channel.send(embed);
+				var embed2=new Discord.MessageEmbed();
+				embed.setColor(msg.member.displayColor);
+				embed.setTitle("And what if...");
+				embed.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
+				msg.channel.send(embed2);
+				break;
 				break;
 			default:
 				var embed=new Discord.MessageEmbed();
@@ -282,6 +294,7 @@ bot.on("message",msg=>{
 				msg.channel.send(embed);
 				break;
 		}
+		
 	}
 });
 
