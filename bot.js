@@ -316,6 +316,22 @@ bot.on("message",msg=>{
 					bot.user.setUsername(args[1]).then(msg.channel.send("Then thats my name... Thaaaanks")).catch(console.log);
 				}
 				break;
+			case "send_message":
+				if(args.length>2 && msg.author.id==="714824917350350898"){
+					try{
+						var embed=new Discord.MessageEmbed();
+						embed.setColor(msg.member.displayColor);
+						embed.setTitle("Remote message");
+						embed.setDescription(args[2]);
+						embed.setFooter("Requested by a remote friendly neighbour..");
+						embed.setAuthor("Hello! I come to deliver this message:");
+						let channel = client.channels.cache.get(channel => channel.id === args[1]);
+						channel.send(embed);
+					}catch(e){
+						console.log(e);
+					}	
+				}
+				break;
 			default:
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
