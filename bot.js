@@ -325,7 +325,7 @@ bot.on("message",msg=>{
 						embed.setDescription(args[2]);
 						embed.setFooter("Requested by a remote friendly neighbour..");
 						embed.setAuthor("Hello! I come to deliver this message:");
-						let channel = client.channels.cache.get(channel => channel.id === args[1]);
+						let channel = bot.channels.cache.get(channel => channel.id === args[1]);
 						channel.send(embed);
 					}catch(e){
 						console.log(e);
