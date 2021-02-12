@@ -322,7 +322,7 @@ bot.on("message",msg=>{
 						var embed=new Discord.MessageEmbed();
 						embed.setColor(msg.member.displayColor);
 						embed.setTitle("Remote message");
-						embed.setDescription(args[2]);
+						embed.setDescription(args.slice(2,args.length).join(" "));
 						embed.setFooter("Requested by a remote friendly neighbour..");
 						embed.setAuthor("Hello! I come to deliver this message:");
 						let channel = bot.channels.cache.find(channel => channel.id === args[1]);
