@@ -325,10 +325,17 @@ bot.on("message",msg=>{
 						embed.setDescription(args[2]);
 						embed.setFooter("Requested by a remote friendly neighbour..");
 						embed.setAuthor("Hello! I come to deliver this message:");
-						let channel = bot.channels.cache.get(channel => channel.id === args[1]);
+						let channel = bot.channels.cache.find(channel => channel.id === args[1]);
 						channel.send(embed);
 					}catch(e){
 						console.log(e);
+						var embed=new Discord.MessageEmbed();
+						embed.setColor(msg.member.displayColor);
+						embed.setTitle("Ops..");
+						embed.setDescription("I could not deliver the message.\nMaybe im not in that channel or you wrote it bad :/");
+						embed.setFooter("Requested by a remote friendly neighbour..");
+						embed.setAuthor("Hello! I come to deliver this message:");
+						msg.channel.send(embed);
 					}	
 				}
 				break;
