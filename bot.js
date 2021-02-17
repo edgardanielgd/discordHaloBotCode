@@ -12,11 +12,24 @@ logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console,{colorize:true});
 logger.level='debug';
 var bot=new Discord.Client();
+var chanID="809795167489753101";
+var msgID="811649809185636352";
+var channelStats="";
+var msgEdit="";
+var servers=[2313,2628,2443,2333,2304,2400,2316,2399];
 bot.once('ready', () => {
 	bot.user.setActivity("Watching Halo CE and Halo PC servers stats");
+	try{
+		channelStats=bot.channels.cache.find(channel=> channel.id===chanID);
+		channelStats.messages.fetch(msgID).then(function(message){msgEdit=message},function(){msgEdit=""});
+		console.log(msgEdit);
+	}catch(e){
+		console.log(e);
+	}
 	console.log('Ready!');
 });
 bot.login(auth.Token);
+setInterval(getSimpleStats,300000);
 function decodeString(string){
 	var string_ret="";
 	var arreglo=[];
@@ -71,6 +84,19 @@ function genString(string){
 	};
 	infPlayers+="\n```";
 	return [str+infPlayers,mapName];
+}
+function getImage(source){
+	let xhr=new XMLHttpRequest();
+	xhr.open("GET","https://api.unsplash.com/search/photos?query="+source);
+	xhr.onreadystatechange=function(){
+		if(xhr.readyState===4 && xhr.status===200){
+			console.log("ola");
+			console.log(xhr.responseText);	
+		}
+		console.log(xhr.readyState);	
+		console.log(xhr.status);
+	}
+	xhr.send();
 }
 function getMapDir(mapname){
 		switch(mapname){
@@ -216,13 +242,70 @@ function sendStats(msgD,ip,port,color,user){
 		msgD.channel.send(embed);
 	},waitTime);		
 }
+function genSimpleString(string){
+	var array=decodeString(string);
+	let numPlayers=array[20];
+	let maxPlayers=array[8];
+	let port=array[6];
+	return [port,numPlayers+"/"+maxPlayers];
+	}
+function getSimpleStats(){
+	var waitTime=1000;
+	var embed=new Discord.MessageEmbed();
+	var arreglo_servers=[];
+	var id={};
+	var conexion_arr=[]
+	for(let i=0;i<servers.length;i++){
+		conexion_arr.push(dgram.createSocket("udp4"));
+		conexion_arr[i].on("error",(err)=>{
+			console.log("server error: \n "+err.stack);
+			conexion_arr[i].close();
+			arreglo_servers.push(servers[i]+": error");
+			if(arreglo_servers.length===servers.length){
+				displaySimpleStats(arreglo_servers);
+			}		
+		});
+		conexion_arr[i].on("message",(msg,rinfo)=>{
+			let inf=genSimpleString(msg.toString());
+			clearTimeout(id[inf[0]]);
+			arreglo_servers.push(inf[0]+": "+inf[1]);
+			if(arreglo_servers.length===servers.length){
+				displaySimpleStats(arreglo_servers);
+			}
+		});
+		conexion_arr[i].on("listening",()=>{
+			var address=conexion_arr[i].address();
+			console.log("server listening "+address.address+":"+address.port);
+		});
+		var mensaje=String.fromCharCode(254,253,0,119,106,63,63,255,255,255,255);
+		conexion_arr[i].send(Buffer.from(mensaje,"ascii"),0,11,servers[i],"104.153.105.98");
+		id[servers[i]]=setTimeout(function(port){
+			arreglo_servers.push(port+": offline");
+			if(arreglo_servers.length===servers.length){
+				displaySimpleStats(arreglo_servers);
+			}
+		},waitTime,servers[i]);
+	}		
+	}
+function displaySimpleStats(arreglo){
+	if(msgEdit){
+		msgEdit.edit("");
+		let embed=new Discord.MessageEmbed();
+		embed.setTitle("Main servers stats");
+		embed.setAuthor("Updating every 5 minutes");
+		embed.setFooter("Main servers last scan");
+		embed.setColor("#FFFFFF");
+		embed.setDescription(arreglo.join("\n"));
+		msgEdit.edit(embed);
+	}
+}
 var mutes={};
 var users={};
 var maxMessagesForMute=5;
 var timeBetweenMessages=1000; //ms
 var timePunishment=30000; //5 mins
 bot.on("message",msg=>{
-	
+	console.log("mensaje");
 	if(msg.toString().substring(0,1)=='/'){
 		/*
 			userID:[nMessages,nIdInterval]
@@ -337,6 +420,11 @@ bot.on("message",msg=>{
 						embed.setAuthor("Hello! I come to deliver this message:");
 						msg.channel.send(embed);
 					}	
+				}
+				break;
+			case "get_im":
+				if(args.length>1){
+					getImage(args[1]);
 				}
 				break;
 			default:
