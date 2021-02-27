@@ -17,6 +17,7 @@ var msgID="811984828734898246";
 var updateTime=300000;
 var channelStats="";
 var msgEdit="";
+var JData={};
 var servers=[2313,2628,2443,2333,2304,2400,2316,2399];
 bot.once('ready', () => {
 	bot.user.setActivity("Watching Halo CE and Halo PC servers stats");
@@ -287,6 +288,107 @@ function displaySimpleStats(arreglo){
 		msgEdit.edit(embed);
 	}
 }
+function readUsersIps(file){
+	fs.readFile(file,"utf-8",function(err,data){
+		if(err || data==""){
+			console.log(err);
+			return false;
+		}
+		let jdata=genJSON(data.split("\n"));
+	});
+}
+function genJSON(array){
+	if (!array){return false}
+	let jReturn={};
+	let ipKey="";
+	let name="";
+	let description="";
+	if(array.length%3!=0)return false;
+	for(let i=0;i<array.length;i+=1){
+		if(i%3==0){
+			ipKey=array[i];
+		}else if(i%3==1){
+			name=array[i];	
+		}else{
+			description=array[i];
+			jReturn[ipKey]=[name,description];
+		}
+	}
+	console.log(jReturn);
+	JData=jReturn;
+	return jReturn;
+}
+function addData(file,ip,name,description){
+	let wrongDataError="";
+	if(name.length>11){
+		wrongDataError="Please type a correct name (no more than 11 characters)";
+		return wrongDataError;
+	}
+	let checkArreglo=ip.split(".");
+	if(checkArreglo.length!=4){
+		wrongDataError="Please type a correct IP";
+		return wrongDataError;
+	}
+	for(let i=0;i<checkArreglo.length;i++){
+		try{
+			let part=parseInt(checkArreglo[i]);
+			if((part<0 || part>255 ||!part || part==NaN) && part!=0){
+				wrongDataError="Please type a correct IP";
+				return wrongDataError;
+			}
+		}catch(e){
+			console.log(e);
+			wrongDataError="Please type a correct IP";
+			return wrongDataError;
+		}
+	}
+	if(description=="")description=" ";
+	let newData="";
+	if(Object.keys(JData).length>0){
+		newData="\n"+ip+"\n"+name+"\n"+description;
+	}else newData=ip+"\n"+name+"\n"+description;
+	fs.appendFile(file,newData,function(err){
+		if(err){
+			console.log(err);
+			return "Something went wrong adding data..";
+		}});
+	JData[ip]=[name,description];
+	return "success";
+}
+function match(str1,str2){
+	let strMin,strMax;
+	if(str1.length>=str2.length){
+		strMax=str1;
+		strMin=str2;
+	}else{
+		strMax=str2;
+		strMin=str1;
+	}
+	for(let i=0;i<strMin.length;i+=1){
+		if(strMin[i]==strMax[i]){
+			continue;
+		}else	return false;
+	}
+	return true;
+}
+function searchData(type,value){
+	console.log(JData);
+	var textOutput="";
+	for(let key in JData){
+		if(type==0){
+			console.log("pasa");
+			if(match(key,value)){
+				textOutput+="Name: "+JData[key][0]+" IP: "+key+" Description: "+JData[key][1]+"\n";
+			}
+		}else if(match(JData[key][type-1],value)){
+			textOutput+="Name: "+JData[key][0]+" IP: "+key+" Description: "+JData[key][1]+"\n";
+		}
+	}
+	if(textOutput=="")textOutput="I couldnt read any data matching with your request";
+	return textOutput;
+}
+
+
 var mutes={};
 var users={};
 var maxMessagesForMute=5;
@@ -431,6 +533,26 @@ bot.on("message",msg=>{
 						embed.setAuthor("Hello! I come to deliver this message:");
 						msg.channel.send(embed);
 					}	
+				}
+				break;
+			case "search":
+				if(args.length>2){
+					var embed=new Discord.MessageEmbed();
+					embed.setColor(msg.member.displayColor);
+					embed.setTitle("Here is what i found:");
+					embed.setDescription(searchData(args[1],args[2]));		
+					embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
+					msg.channel.send(embed);
+				}
+				break;
+			case "add":
+				if(args.length>3){
+					var embed=new Discord.MessageEmbed();
+					embed.setColor(msg.member.displayColor);
+					embed.setTitle("Here is what i found:");
+					embed.setDescription(addData(file,args[1],args[2],args[3]));		
+					embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
+					msg.channel.send(embed);
 				}
 				break;
 			default:
