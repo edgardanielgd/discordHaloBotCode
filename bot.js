@@ -12,10 +12,12 @@ logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console,{colorize:true});
 logger.level='debug';
 var bot=new Discord.Client();
-var chanID="809795167489753101";
-var msgID="811649809185636352";
+var chanID="811984742261850123";
+var msgID="811984828734898246";
+var updateTime=300000;
 var channelStats="";
 var msgEdit="";
+var JData={};
 var servers=[2313,2628,2443,2333,2304,2400,2316,2399];
 bot.once('ready', () => {
 	bot.user.setActivity("Watching Halo CE and Halo PC servers stats");
@@ -29,7 +31,7 @@ bot.once('ready', () => {
 	console.log('Ready!');
 });
 bot.login(auth.Token);
-setInterval(getSimpleStats,300000);
+var interval=setInterval(getSimpleStats,updateTime);
 function decodeString(string){
 	var string_ret="";
 	var arreglo=[];
@@ -84,19 +86,6 @@ function genString(string){
 	};
 	infPlayers+="\n```";
 	return [str+infPlayers,mapName];
-}
-function getImage(source){
-	let xhr=new XMLHttpRequest();
-	xhr.open("GET","https://api.unsplash.com/search/photos?query="+source);
-	xhr.onreadystatechange=function(){
-		if(xhr.readyState===4 && xhr.status===200){
-			console.log("ola");
-			console.log(xhr.responseText);	
-		}
-		console.log(xhr.readyState);	
-		console.log(xhr.status);
-	}
-	xhr.send();
 }
 function getMapDir(mapname){
 		switch(mapname){
@@ -292,20 +281,121 @@ function displaySimpleStats(arreglo){
 		msgEdit.edit("");
 		let embed=new Discord.MessageEmbed();
 		embed.setTitle("Main servers stats");
-		embed.setAuthor("Updating every 5 minutes");
+		embed.setAuthor("Updating every "+updateTime+ " miliseconds");
 		embed.setFooter("Main servers last scan");
 		embed.setColor("#FFFFFF");
 		embed.setDescription(arreglo.join("\n"));
 		msgEdit.edit(embed);
 	}
 }
+function readUsersIps(file){
+	fs.readFile(file,"utf-8",function(err,data){
+		if(err || data==""){
+			console.log(err);
+			return false;
+		}
+		let jdata=genJSON(data.split("\n"));
+	});
+}
+function genJSON(array){
+	if (!array){return false}
+	let jReturn={};
+	let ipKey="";
+	let name="";
+	let description="";
+	if(array.length%3!=0)return false;
+	for(let i=0;i<array.length;i+=1){
+		if(i%3==0){
+			ipKey=array[i];
+		}else if(i%3==1){
+			name=array[i];	
+		}else{
+			description=array[i];
+			jReturn[ipKey]=[name,description];
+		}
+	}
+	console.log(jReturn);
+	JData=jReturn;
+	return jReturn;
+}
+function addData(file,ip,name,description){
+	let wrongDataError="";
+	if(name.length>11){
+		wrongDataError="Please type a correct name (no more than 11 characters)";
+		return wrongDataError;
+	}
+	let checkArreglo=ip.split(".");
+	if(checkArreglo.length!=4){
+		wrongDataError="Please type a correct IP";
+		return wrongDataError;
+	}
+	for(let i=0;i<checkArreglo.length;i++){
+		try{
+			let part=parseInt(checkArreglo[i]);
+			if((part<0 || part>255 ||!part || part==NaN) && part!=0){
+				wrongDataError="Please type a correct IP";
+				return wrongDataError;
+			}
+		}catch(e){
+			console.log(e);
+			wrongDataError="Please type a correct IP";
+			return wrongDataError;
+		}
+	}
+	if(description=="")description=" ";
+	let newData="";
+	if(Object.keys(JData).length>0){
+		newData="\n"+ip+"\n"+name+"\n"+description;
+	}else newData=ip+"\n"+name+"\n"+description;
+	fs.appendFile(file,newData,function(err){
+		if(err){
+			console.log(err);
+			return "Something went wrong adding data..";
+		}});
+	JData[ip]=[name,description];
+	return "success";
+}
+function match(str1,str2){
+	let strMin,strMax;
+	if(str1.length>=str2.length){
+		strMax=str1;
+		strMin=str2;
+	}else{
+		strMax=str2;
+		strMin=str1;
+	}
+	for(let i=0;i<strMin.length;i+=1){
+		if(strMin[i]==strMax[i]){
+			continue;
+		}else	return false;
+	}
+	return true;
+}
+function searchData(type,value){
+	console.log(JData);
+	var textOutput="";
+	for(let key in JData){
+		if(type==0){
+			console.log("pasa");
+			if(match(key,value)){
+				textOutput+="Name: "+JData[key][0]+" IP: "+key+" Description: "+JData[key][1]+"\n";
+			}
+		}else if(match(JData[key][type-1],value)){
+			textOutput+="Name: "+JData[key][0]+" IP: "+key+" Description: "+JData[key][1]+"\n";
+		}
+	}
+	if(textOutput=="")textOutput="I couldnt read any data matching with your request";
+	return textOutput;
+}
+
+
 var mutes={};
 var users={};
 var maxMessagesForMute=5;
 var timeBetweenMessages=1000; //ms
-var timePunishment=30000; //5 mins
+var timePunishment=300000; //5 mins
 bot.on("message",msg=>{
-	console.log("mensaje");
+	
 	if(msg.toString().substring(0,1)=='/'){
 		/*
 			userID:[nMessages,nIdInterval]
@@ -366,28 +456,21 @@ bot.on("message",msg=>{
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("And what does this bot?");
-				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...");
+				embed.setDescription("Type /on [ip addres=104.153.105.98] <portNumber> to see some halo servers stats\nType /credits for some aditional info...\n (and type /charly for a spanish joke)");
 				embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
 				msg.channel.send(embed);
-				var embed2=new Discord.MessageEmbed();
-				embed2.setColor(msg.member.displayColor);
-				embed2.setTitle("And what if...");
-				embed2.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
-				msg.channel.send(embed2);
+				if(msg.author.id==="714824917350350898"){
+					msg.channel.send("Your special commands fochman:\nnew_av <URL>\nnew_name <name>\nchange_interval <intervalMS>\nchange_place <channelID><messageID>");
+				}
 				break;
 			case "credits":
 				var embed=new Discord.MessageEmbed();
 				embed.setColor(msg.member.displayColor);
 				embed.setTitle("Huge thanks!");
-				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman\nhttps://github.com/edgardanielgd/HaloStatsForDiscord");
+				embed.setDescription("Based on: BK-Translator Bot (By Este)\nThanks to: hce.halomaps.org\n\nDeveloped by: {BK}Fochman\n\nAnd thanks to {BK}Charly for some help with hosting this bot :v");
 				embed.setAuthor("Hi! I obtained this:");
 				embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
 				msg.channel.send(embed);
-				var embed2=new Discord.MessageEmbed();
-				embed2.setColor(msg.member.displayColor);
-				embed2.setTitle("And what if...");
-				embed2.setDescription("Keep me alive!\nOnly you have to enter a second to: https://vine-azure-hippopotamus.glitch.me/ and you will give him 5 minutes more!");
-				msg.channel.send(embed2);
 				break;
 			case "new_av":
 				if(args.length>1 && msg.author.id==="714824917350350898"){
@@ -397,6 +480,36 @@ bot.on("message",msg=>{
 			case "new_name":
 				if(args.length>1 && msg.author.id==="714824917350350898"){
 					bot.user.setUsername(args[1]).then(msg.channel.send("Then thats my name... Thaaaanks")).catch(console.log);
+				}
+				break;
+			case "change_interval":
+				if(args.length>1 && msg.author.id==="714824917350350898"){
+					try{
+						updateTime=parseInt(args[1]);
+						clearInterval(interval);
+						interval=setInterval(getSimpleStats,updateTime);
+						msg.channel.send("Success");
+					}catch(e){
+						console.log(e);
+					}
+				}
+				break;
+			case "change_place":
+				if(args.length>2 && msg.author.id==="714824917350350898"){
+					let tempCID=chanID;
+					let tempMID=msgID;
+					try{
+						channelStats=bot.channels.cache.find(channel=> channel.id===args[1]);
+						channelStats.messages.fetch(args[2]).then(function(message){msgEdit=message},function(){msgEdit=""});
+						console.log(msgEdit);
+						chanID=args[1];
+						msgID=args[2];
+						msg.channel.send("success");
+					}catch(e){
+						chanID=tempCID;
+						msgID=tempMID;
+						console.log(e);
+					}
 				}
 				break;
 			case "send_message":
@@ -422,9 +535,24 @@ bot.on("message",msg=>{
 					}	
 				}
 				break;
-			case "get_im":
-				if(args.length>1){
-					getImage(args[1]);
+			case "search":
+				if(args.length>2){
+					var embed=new Discord.MessageEmbed();
+					embed.setColor(msg.member.displayColor);
+					embed.setTitle("Here is what i found:");
+					embed.setDescription(searchData(args[1],args[2]));		
+					embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
+					msg.channel.send(embed);
+				}
+				break;
+			case "add":
+				if(args.length>3){
+					var embed=new Discord.MessageEmbed();
+					embed.setColor(msg.member.displayColor);
+					embed.setTitle("Here is what i found:");
+					embed.setDescription(addData(file,args[1],args[2],args[3]));		
+					embed.setFooter("Requested by: "+msg.author.username+"#"+msg.author.discriminator,msg.author.avatarURL());
+					msg.channel.send(embed);
 				}
 				break;
 			default:
@@ -440,5 +568,3 @@ bot.on("message",msg=>{
 				msg.react(String.fromCodePoint("O".codePointAt(0) - 65 + 0x1f1e6)).then(msg.react(String.fromCodePoint("K".codePointAt(0) - 65 + 0x1f1e6)));
 			}
 });
-
-
